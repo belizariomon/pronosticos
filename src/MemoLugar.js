@@ -16,7 +16,6 @@ export default React.memo((props) => {
     }
 
     const setearHisto = () => {
-        console.log(props)
         if (props.lugar) {
             const nuevoItem = {
                 id: props.lugar.id,

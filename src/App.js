@@ -13,7 +13,6 @@ const App = () => {
   }, []);
 
   const ajustoLugar = (_item) => {
-    console.log(_item)
     var lugar = {
       id: _item.place.place_id,
       lat: _item.place.geometry.location.lat(),
@@ -30,7 +29,7 @@ const App = () => {
 
   const agregarItemHistoLocal = (_item) => {
     if (historialBus.find(x => x.id ===_item.id) === undefined) historialBus.push(_item)
-    if (historialBus.lenght > 5) historialBus.pop()
+    if (historialBus.length > 5) historialBus.shift()
     localStorage.setItem('dataFromReactApp', JSON.stringify(historialBus));
   }
 
@@ -45,8 +44,10 @@ const App = () => {
   }
  
   const renderHistorial = () => {
-    if (historialBus) {
+    if (historialBus !== undefined && historialBus.length>0) {
       return (
+        <>
+        <p>Busquedas recientes </p>
         <div style={{display:"flex", flexDirection:"row", width:"90%", marginLeft: "auto"}}>
           {
             historialBus.map((item, key) => (
@@ -58,6 +59,7 @@ const App = () => {
             ))
           }
         </div>
+        </>
       )
     }
   }
@@ -91,7 +93,6 @@ const App = () => {
         }
 
         {/* Sección para el historial */}
-        <p>Busquedas recientes </p>
         <div >
           {renderHistorial()}
         </div>
