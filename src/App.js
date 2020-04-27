@@ -1,38 +1,67 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Autocomplete from 'react-google-autocomplete';
 import RenderLugar from './MemoLugar';
 
 const App = () => {
-
   const [lugarActual, setLugAct] = useState();
- 
-  // const renderBusqueda = () => {
-  //   return (
-  //     <div>
-  //       <p>Lugar: {lugarActual.place.formatted_address}</p>
-  //       <p>Id: {lugarActual.place.place_id}</p>
-  //       <p>Latitud: {lugarActual.place.geometry.location.lat()}</p>
-  //       <p>Longitud: {lugarActual.place.geometry.location.lng()}</p>
-  //     </div>
-  //   )
-  // }
-
-  // // Lugar: Goya, Corrientes, Argentina
-
-  // // Id: ChIJ7ztSBZaETpQR4ZoyalQRCXw
+  const [historialBus, setHistoBus] = useState();
   
-  // // Latitud: -29.1442242
-  
-  // // Longitud: -59.2643242
+  useEffect(() => {
+    leerHistoLocal()
+  }, []);
 
-  // const renderClima = ()=>{
-  //   fetch(`http://api.openweathermap.org/data/2.5/weather?lat=${lugarActual.place.geometry.location.lat()}&lon=${lugarActual.place.geometry.location.lng()}&appid=00711a3758ab4344055644c98a782186`)
-  //   .then(res => res.json())
-  //   .then(text => console.log(text))
-  // }
+  const ajustoLugar = (_item) => {
+    console.log(_item)
+    var lugar = {
+      id: _item.place.place_id,
+      lat: _item.place.geometry.location.lat(),
+      lon: _item.place.geometry.location.lng(),
+      nombre: _item.place.formatted_address
+    } 
+    setLugAct(lugar)
+  }
+
+  const leerHistoLocal = () => {
+    var listaHisto = JSON.parse(localStorage.getItem('dataFromReactApp')) || [];
+    setHistoBus(listaHisto)  
+  }
+
+  const agregarItemHistoLocal = (_item) => {
+    if (historialBus.find(x => x.id ===_item.id) === undefined) historialBus.push(_item)
+    if (historialBus.lenght > 5) historialBus.pop()
+    localStorage.setItem('dataFromReactApp', JSON.stringify(historialBus));
+  }
+
+  const visualiarBusquedaH = (_item) => {
+    var lugar = {
+      id: _item.id,
+      lat: _item.lat,
+      lon: _item.lon,
+      nombre: _item.nombre
+    } 
+    setLugAct(lugar)
+  }
  
+  const renderHistorial = () => {
+    if (historialBus) {
+      return (
+        <div style={{display:"flex", flexDirection:"row", width:"90%", marginLeft: "auto"}}>
+          {
+            historialBus.map((item, key) => (
+              <div key={key} className="Card" style={{cursor:'pointer', padding:20, margin:20}} onClick={()=>visualiarBusquedaH(item)}>
+                <p >{item.nombre}</p>
+                <p>{item.lat}</p>
+                <p>{item.lon}</p>
+              </div>
+            ))
+          }
+        </div>
+      )
+    }
+  }
+
   return (
     <div className="App">
       <header className="App-header Columna">
@@ -41,48 +70,35 @@ const App = () => {
           Forecast app by Belimon.
         </p>
 
+        {/* Sección del buscador: react-google-autocomplete me pareció ideal para lo que necesitaba y ya estaba empaquetado */}
         <Autocomplete
-          style={{ width: '90%' }}
-          onPlaceSelected={(place) => {setLugAct({place})}}
+          style={{ width: '90%',fontSize:'inherit' }}
+          onPlaceSelected={(place) => {ajustoLugar({place})}}
           types={['(regions)']}
         />
 
       </header>
-      <div className="App-body Columna">
+
+      <div className="App-body Columna" >
+
+        {/* Sección para el lugar buscado */}
         {
           lugarActual ? (
-            <RenderLugar lugar={lugarActual.place}/>
+            <RenderLugar lugar={lugarActual} agregarItemHistoLocal={agregarItemHistoLocal}/>
           ) : (
-              <p> Sin busqueda</p>
+              <p></p>
             )
         }
+
+        {/* Sección para el historial */}
+        <p>Busquedas recientes </p>
+        <div >
+          {renderHistorial()}
+        </div>
+
       </div>
     </div>
   )
 }
 
-export default App;
-
-
-{/* <>
-<div>
-  {
-    renderBusqueda()
-  }
-</div>
- 
-<div>
-
-</div>
-{
-  renderClima()
-}
-</> */}
-
-
-// <p> Lugar: {_clima.name}</p>
-
-// <p> Temperatura: {(_clima.main.temp - 32) * 5/9} </p>
-// <p> Estado: {_clima.weather[0].main}</p>
-// <p> Descripcion: {_clima.weather[0].description}</p>
-// <p> Viento: {_clima.wind.speed} k/h</p>
+export default App;  
