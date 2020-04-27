@@ -36,6 +36,18 @@
   color: #61dafb;
 }
 
+.Card {
+  margin:auto;
+  margin-top: 20px; 
+  color: darkslategray;
+  background-color: whitesmoke;
+  border-radius: 5px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: lightslategrey;
+  max-width: 20%;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
