@@ -1,24 +1,58 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import Autocomplete from 'react-google-autocomplete';
 
-function App() {
+const App = () => {
+
+  const [lugarActual, setLugAct] = useState();
+
+  useEffect(() => {
+    console.log(lugarActual);
+  }, [lugarActual])
+
+  const renderBusqueda = ()=>{
+
+    return (
+      <div>
+        <p>Lugar: {lugarActual.place.formatted_address}</p>
+        <p>Id: {lugarActual.place.place_id}</p>
+        <p>Latitud: {lugarActual.place.geometry.location.lat()}</p>
+        <p>Longitud: {lugarActual.place.geometry.location.lng()}</p>
+      </div>
+    )
+  }
+  // Lugar: Goya, Corrientes, Argentina
+
+  // Id: ChIJ7ztSBZaETpQR4ZoyalQRCXw
+  
+  // Latitud: -29.1442242
+  
+  // Longitud: -59.2643242
   return (
     <div className="App">
-      <header className="App-header">
+      <header className="App-header Columna">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          Forecast app by Belimon.
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+
+        <Autocomplete
+          style={{ width: '90%' }}
+          onPlaceSelected={(place) => {setLugAct({place})}}
+          types={['(regions)']}
+        />
+
       </header>
+      <div className="App-body Columna">
+        {
+          lugarActual ? (
+            renderBusqueda()
+          ) : (
+              <p> Sin busqueda</p>
+            )
+        }
+      </div>
     </div>
   );
 }
