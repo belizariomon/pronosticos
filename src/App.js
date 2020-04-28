@@ -3,7 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import Autocomplete from 'react-google-autocomplete';
 import RenderLugar from './MemoLugar';
-
+ 
 const App = () => {
   const [lugarActual, setLugAct] = useState();
   const [historialBus, setHistoBus] = useState();
@@ -31,6 +31,7 @@ const App = () => {
     if (historialBus.find(x => x.id ===_item.id) === undefined) historialBus.push(_item)
     if (historialBus.length > 5) historialBus.shift()
     localStorage.setItem('dataFromReactApp', JSON.stringify(historialBus));
+    leerHistoLocal()
   }
 
   const visualiarBusquedaH = (_item) => {
