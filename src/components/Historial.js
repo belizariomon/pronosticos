@@ -1,6 +1,7 @@
 import React from 'react'
 
-export const Historial = ({ historialBus }) => {
+export const Historial = ({ historialBus, setLugAct }) => {
+   
     const visualiarBusquedaH = (item) => {
         const lugar = {
             id: item.id,
@@ -25,15 +26,15 @@ export const Historial = ({ historialBus }) => {
                                         style={{ cursor: 'pointer', padding: 20, margin: 20 }} 
                                         onClick={() => visualiarBusquedaH(item)}>
                                         <p >{item.nombre}</p>
-                                        <p>{item.lat}</p>
-                                        <p>{item.lon}</p>
+                                        <p>Lat: {item.lat.toFixed(4)}</p>
+                                        <p>Lon: {item.lon.toFixed(4)}</p>
                                     </div>
                                 ))
                             }
                         </div>
                     </>
                 ) : (
-                    <p> Sin Contenido</p>
+                    <p> Sin historial</p>
                 )
             }
         </>

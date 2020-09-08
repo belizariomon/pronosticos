@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Autocomplete from 'react-google-autocomplete';
-import RenderLugar from './components/MemoLugar';
+import { MemoLugar } from './components/MemoLugar';
 import { Historial } from './components/Historial';
 
 const App = () => {
@@ -22,7 +22,8 @@ const App = () => {
       lon: geometry.location.lng(),
       nombre: formatted_address
     }
-    setLugAct(lugar)
+    setLugAct(lugar) 
+    agregarItemHistoLocal(lugar)
   }
 
   const leerHistoLocal = () => {
@@ -30,14 +31,12 @@ const App = () => {
     setHistoBus(listaHisto)
   }
 
-  const agregarItemHistoLocal = (_item) => {
-    if (historialBus.find(x => x.id === _item.id) === undefined) historialBus.push(_item)
+  const agregarItemHistoLocal = (item) => {
+    if (historialBus.find(x => x.id === item.id) === undefined) historialBus.push(item)
     if (historialBus.length > 5) historialBus.shift()
     localStorage.setItem('dataFromReactApp', JSON.stringify(historialBus));
     leerHistoLocal()
   }
-
-
 
   return (
     <div className="App">
@@ -61,7 +60,7 @@ const App = () => {
         {/* Sección para el lugar buscado */}
         {
           lugarActual ? (
-            <RenderLugar lugar={lugarActual} agregarItemHistoLocal={agregarItemHistoLocal} />
+            <MemoLugar lugar={lugarActual} agregarItemHistoLocal={agregarItemHistoLocal} />
           ) : (
               <p></p>
             )
@@ -70,7 +69,7 @@ const App = () => {
         {/* Sección para el historial */}
         <div >
           {
-            <Historial historialBus={historialBus}/>
+            <Historial historialBus={historialBus} setLugAct={setLugAct}/>
           }
         </div>
 
