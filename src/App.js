@@ -2,68 +2,42 @@ import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Autocomplete from 'react-google-autocomplete';
-import RenderLugar from './MemoLugar';
- 
+import RenderLugar from './components/MemoLugar';
+import { Historial } from './components/Historial';
+
 const App = () => {
+
   const [lugarActual, setLugAct] = useState();
   const [historialBus, setHistoBus] = useState();
-  
+
   useEffect(() => {
     leerHistoLocal()
   }, []);
 
-  const ajustoLugar = (_item) => {
-    var lugar = {
-      id: _item.place.place_id,
-      lat: _item.place.geometry.location.lat(),
-      lon: _item.place.geometry.location.lng(),
-      nombre: _item.place.formatted_address
-    } 
+  const ajustoLugar = (item) => {
+    const { place_id, geometry, formatted_address } = item.place
+    const lugar = {
+      id: place_id,
+      lat: geometry.location.lat(),
+      lon: geometry.location.lng(),
+      nombre: formatted_address
+    }
     setLugAct(lugar)
   }
 
   const leerHistoLocal = () => {
     var listaHisto = JSON.parse(localStorage.getItem('dataFromReactApp')) || [];
-    setHistoBus(listaHisto)  
+    setHistoBus(listaHisto)
   }
 
   const agregarItemHistoLocal = (_item) => {
-    if (historialBus.find(x => x.id ===_item.id) === undefined) historialBus.push(_item)
+    if (historialBus.find(x => x.id === _item.id) === undefined) historialBus.push(_item)
     if (historialBus.length > 5) historialBus.shift()
     localStorage.setItem('dataFromReactApp', JSON.stringify(historialBus));
     leerHistoLocal()
   }
 
-  const visualiarBusquedaH = (_item) => {
-    var lugar = {
-      id: _item.id,
-      lat: _item.lat,
-      lon: _item.lon,
-      nombre: _item.nombre
-    } 
-    setLugAct(lugar)
-  }
- 
-  const renderHistorial = () => {
-    if (historialBus !== undefined && historialBus.length>0) {
-      return (
-        <>
-        <p>Busquedas recientes </p>
-        <div style={{display:"flex", flexDirection:"row", width:"90%", marginLeft: "auto"}}>
-          {
-            historialBus.map((item, key) => (
-              <div key={key} className="Card" style={{cursor:'pointer', padding:20, margin:20}} onClick={()=>visualiarBusquedaH(item)}>
-                <p >{item.nombre}</p>
-                <p>{item.lat}</p>
-                <p>{item.lon}</p>
-              </div>
-            ))
-          }
-        </div>
-        </>
-      )
-    }
-  }
+
 
   return (
     <div className="App">
@@ -75,8 +49,8 @@ const App = () => {
 
         {/* Sección del buscador: react-google-autocomplete me pareció ideal para lo que necesitaba y ya estaba empaquetado */}
         <Autocomplete
-          style={{ width: '90%',fontSize:'inherit' }}
-          onPlaceSelected={(place) => {ajustoLugar({place})}}
+          style={{ width: '90%', fontSize: 'inherit' }}
+          onPlaceSelected={(place) => { ajustoLugar({ place }) }}
           types={['(regions)']}
         />
 
@@ -87,7 +61,7 @@ const App = () => {
         {/* Sección para el lugar buscado */}
         {
           lugarActual ? (
-            <RenderLugar lugar={lugarActual} agregarItemHistoLocal={agregarItemHistoLocal}/>
+            <RenderLugar lugar={lugarActual} agregarItemHistoLocal={agregarItemHistoLocal} />
           ) : (
               <p></p>
             )
@@ -95,7 +69,9 @@ const App = () => {
 
         {/* Sección para el historial */}
         <div >
-          {renderHistorial()}
+          {
+            <Historial historialBus={historialBus}/>
+          }
         </div>
 
       </div>

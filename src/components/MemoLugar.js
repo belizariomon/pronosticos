@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 
-export default React.memo((props) => {
+export default React.memo(({lugar,agregarItemHistoLocal}) => {
 
     const [infoClima, setInfoClima] = useState()
+    const {id, lat, lon, nombre} = lugar
 
     useEffect(() => {
         apiClima()
@@ -10,20 +11,20 @@ export default React.memo((props) => {
     }, [])
 
     const apiClima = () => {
-        fetch(`http://api.openweathermap.org/data/2.5/weather?lat=${props.lugar.lat}&lon=${props.lugar.lon}&appid=00711a3758ab4344055644c98a782186&lang=es`)
+        fetch(`http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=00711a3758ab4344055644c98a782186&lang=es`)
             .then(res => res.json())
             .then(text => setInfoClima(text))
     }
 
     const setearHisto = () => {
-        if (props.lugar) {
+        if (lugar) {
             const nuevoItem = {
-                id: props.lugar.id,
-                lat: props.lugar.lat,
-                lon: props.lugar.lon,
-                nombre: props.lugar.nombre
+                id: id,
+                lat: lat,
+                lon: lon,
+                nombre: nombre
             }
-            props.agregarItemHistoLocal(nuevoItem)
+            agregarItemHistoLocal(nuevoItem)
         }
     }
 
@@ -31,12 +32,11 @@ export default React.memo((props) => {
         <>
             <div>
                 {
-                    props.lugar ? (
+                    lugar ? (
                         <div className="Card">
-                            <p>Lugar: {props.lugar.nombre}</p>
-                            {/* <p>Id: {props.lugar.place_id}</p> */}
-                            <p>Latitud: {props.lugar.lat}</p>
-                            <p>Longitud: {props.lugar.lon}</p>
+                            <p>Lugar: { nombre}</p> 
+                            <p>Latitud: { lat}</p>
+                            <p>Longitud: { lon}</p>
                         </div>
                     ) : (<p> Sin datos de la Ciudad</p>)
                 }
